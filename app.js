@@ -1,7 +1,11 @@
 const express=require('express');
 const app=express();
+const methodOverride = require('method-override');
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(methodOverride('_method'));
 
 let usuarios = [
     { id: 1, nombre: 'Ryu', edad: 32, lugarProcedencia: 'Japón' },
@@ -16,10 +20,27 @@ app.get('/', (req, res) => {
       `<h1>Street Figther Characters</h1>
       <ul>
       ${usuarios
-        .map((usuario) => `<li>ID:${usuario.id} | Nombre: ${usuario.nombre}</li>`)
+        .map((usuario) => `<li>id:${usuario.id} · Nombre: ${usuario.nombre} | Edad:${usuario.edad} | Lugar de Procedencia: ${usuario.lugarProcedencia}
+            <form action="/usuarios/${usuario.nombre}" method="POST" style="display inline;">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit">Eliminar</button>
+            </form>
+
+            <form action="/usuarios/${usuario.nombre}" method="POST" style="display: inline;">
+            <input type="hidden" name="_method" value="PATCH">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" value="${usuario.nombre}" required><br><br>
+            <label for="edad">Edad:</label>
+            <input type="number" name="edad" value="${usuario.edad}" required><br><br>
+            <label for="lugarProcedencia">Lugar de Procedencia:</label>
+            <input type="text" name="lugarProcedencia" value="${usuario.lugarProcedencia}" required><br><br>
+            <button type="submit">Actualizar</button>
+            </form>
+        </li>`)
         .join('')}
         <ul/>
-        <form action="/usuarios" method="post">
+
+        <form action="/usuarios" method="POST">
         <br>
         <label for"nombre">Nombre</label>
         <input type="text" id="nombre" name= "nombre"required><br><br>
@@ -28,9 +49,7 @@ app.get('/', (req, res) => {
         <label for"lugarProcedencia">Lugar de Procedencia</label>
         <input type="text" id="lugarProcedencia" name= "lugarProcedencia"><br><br>
         <button type="submit">Agregar usuario</button><br><br>
-        <a href="/usuarios">usuarios json</a>
-
-        </form>
+        
         `
     );
   });
@@ -64,7 +83,7 @@ app.post('/usuarios', (req, res) => {
     res.redirect('/');
 });
 //findIndex devuelve -1 si no encuentra
-app.put('/usuarios/nombre:',(req,res)=>{
+app.patch('/usuarios/:nombre',(req,res)=>{
     const index=usuarios.findIndex((u)=>u.nombre.toLowerCase() ===req.params.nombre.toLowerCase());
     if(index==-1){
         res.status(404).json({mensaje:'Usuario no encontrado'});
@@ -80,11 +99,13 @@ app.put('/usuarios/nombre:',(req,res)=>{
 app.delete('/usuarios/:nombre',(req,res)=>{
     const usuarioExiste=usuarios.some((u)=>u.nombre.toLowerCase()===req.params.nombre.toLowerCase());
     if(usuarioExiste){
-        usuarios=usuario.filter((u)=>u.nombre.toLowerCase()!==req.params.nombre.toLowerCase());
-        res.json({mensaje:'Usuario eliminado'});
+        usuarios=usuarios.filter((u)=>u.nombre.toLowerCase()!==req.params.nombre.toLowerCase());
+        /* res.json({mensaje:'Usuario eliminado'}); */
+        res.redirect('/');
     }else{
         res.status(404).json({mensaje:'Usuario no encontrado'})
     }
+    
 })
 
 
