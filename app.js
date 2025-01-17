@@ -61,7 +61,7 @@ app.get('/usuarios',(req,res)=>{
 });
 
 app.get('/usuarios/:nombre',(req,res)=>{   
-    const usuario=usuarios.find((u)=>u.nombre.toLowerCase()===req.params.nombre.toLowerCase());
+    const usuario=usuarios.find((user)=>user.nombre.toLowerCase()===req.params.nombre.toLowerCase());
     if(usuario){
         res.json(usuario);
     }else{
@@ -84,7 +84,7 @@ app.post('/usuarios', (req, res) => {
 });
 //findIndex devuelve -1 si no encuentra
 app.patch('/usuarios/:nombre',(req,res)=>{
-    const index=usuarios.findIndex((u)=>u.nombre.toLowerCase() ===req.params.nombre.toLowerCase());
+    const index=usuarios.findIndex((user)=>user.nombre.toLowerCase() ===req.params.nombre.toLowerCase());
     if(index==-1){
         res.status(404).json({mensaje:'Usuario no encontrado'});
     }else{
@@ -97,9 +97,9 @@ app.patch('/usuarios/:nombre',(req,res)=>{
 });
 
 app.delete('/usuarios/:nombre',(req,res)=>{
-    const usuarioExiste=usuarios.some((u)=>u.nombre.toLowerCase()===req.params.nombre.toLowerCase());
+    const usuarioExiste=usuarios.some((user)=>user.nombre.toLowerCase()===req.params.nombre.toLowerCase());
     if(usuarioExiste){
-        usuarios=usuarios.filter((u)=>u.nombre.toLowerCase()!==req.params.nombre.toLowerCase());
+        usuarios=usuarios.filter((user)=>user.nombre.toLowerCase()!==req.params.nombre.toLowerCase());
         /* res.json({mensaje:'Usuario eliminado'}); */
         res.redirect('/');
     }else{
